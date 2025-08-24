@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/bigbutton.dart';
 import '../painter/mandelbrot_painter.dart';
 import '../painter/julia_painter.dart';
 
@@ -50,68 +51,20 @@ class _FractalViewState extends State<FractalView> {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black,
-                          blurRadius: 10,
-                          offset: Offset(5, 5),
-                        ),
-                      ],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0, // Schatten kommt vom Container
-                        backgroundColor: Colors.blueGrey,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          side: BorderSide(
-                            color: activeFractal == 'mandelbrot' ? Colors.orange : Colors.white,
-                            width: 2,
-                          ),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                      ),
-                      onPressed: () => setState(() => activeFractal = 'mandelbrot'),
-                      child: const Text('Mandelbrot'),
-                    ),
+                  child: BigButton(
+                    label: 'Mandelbrot',
+                    isActive: activeFractal == 'mandelbrot',
+                    onPressed: () => setState(() => activeFractal = 'mandelbrot'),
                   ),
                 ),
               ),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black,
-                          blurRadius: 10,
-                          offset: Offset(5, 5),
-                        ),
-                      ],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        backgroundColor: Colors.blueGrey,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          side: BorderSide(
-                            color: activeFractal != 'mandelbrot' ? Colors.orange : Colors.white,
-                            width: 2,
-                          ),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                      ),
-                      onPressed: () => setState(() => activeFractal = 'julia'),
-                      child: const Text('Julia'),
-                    ),
+                  child: BigButton(
+                    label: 'Julia',
+                    isActive: activeFractal == 'julia',
+                    onPressed: () => setState(() => activeFractal = 'julia'),
                   ),
                 ),
               ),
