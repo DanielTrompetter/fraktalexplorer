@@ -8,6 +8,13 @@ class JuliaPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    final rrect = RRect.fromRectAndRadius(
+      Offset.zero & size,
+      const Radius.circular(20),
+    );
+    canvas.save();
+    canvas.clipRRect(rrect);
+
     final int w = size.width.toInt();
     final int h = size.height.toInt();
     final paint = Paint();
@@ -31,6 +38,8 @@ class JuliaPainter extends CustomPainter {
         canvas.drawRect(Rect.fromLTWH(x.toDouble(), y.toDouble(), 1, 1), paint);
       }
     }
+
+    canvas.restore();
   }
 
   @override

@@ -3,9 +3,15 @@ import 'package:flutter/material.dart';
 class MandelbrotPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
+    final rrect = RRect.fromRectAndRadius(
+      Offset.zero & size,
+      const Radius.circular(20),
+    );
+    canvas.save();
+    canvas.clipRRect(rrect);
+
     final int w = size.width.toInt();
     final int h = size.height.toInt();
-
     final paint = Paint();
 
     for (int x = 0; x < w; x++) {
@@ -26,6 +32,8 @@ class MandelbrotPainter extends CustomPainter {
         canvas.drawRect(Rect.fromLTWH(x.toDouble(), y.toDouble(), 1, 1), paint);
       }
     }
+
+    canvas.restore();
   }
 
   @override
