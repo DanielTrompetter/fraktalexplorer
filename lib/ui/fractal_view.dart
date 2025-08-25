@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../painter/overlaypainter.dart';
 import '../widgets/bigbutton.dart';
 import '../painter/mandelbrot_painter.dart';
 import '../painter/julia_painter.dart';
@@ -11,8 +12,18 @@ class FractalView extends StatefulWidget {
 }
 
 class _FractalViewState extends State<FractalView> {
+  Offset? dragStart;
+  Offset? dragEnd;
+
   String activeFractal = 'mandelbrot';
 
+  CustomPainter painterWithRect(CustomPainter basePainter) {
+    return OverlayPainter(
+      base: basePainter,
+      dragStart: dragStart,
+      dragEnd: dragEnd,
+    );
+  }
   @override
   Widget build(BuildContext context) {
     final CustomPainter painter = (activeFractal == 'mandelbrot')
@@ -25,25 +36,43 @@ class _FractalViewState extends State<FractalView> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            width: 400,
-            height: 400,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.white, width: 2),
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black,
-                  blurRadius: 10,
-                  offset: const Offset(5, 5),
-                ),
-              ],
-            ),
-            child: ClipRRect(
+        Container(
+          width: 400,
+          height: 400,
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.white, width: 2),
             borderRadius: BorderRadius.circular(20),
-            child: CustomPaint(painter: painter),
-            )
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black,
+                blurRadius: 10,
+                offset: const Offset(5, 5),
+              ),
+            ],
           ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: GestureDetector(
+              onPanStart: (details) {
+                setState(() {
+                  dragStart = details.localPosition;
+                  dragEnd = details.localPosition;
+                });
+              },
+              onPanUpdate: (details) {
+                setState(() {
+                  dragEnd = details.localPosition;
+                });
+              },
+              onPanEnd: (details) {
+                print('Zoom rect: ${Rect.fromPoints(dragStart!, dragEnd!)}');
+              },
+              child: CustomPaint(
+                painter: painterWithRect(painter),
+              ),
+            ),
+          ),
+        ),
           const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -75,3 +104,5 @@ class _FractalViewState extends State<FractalView> {
     ); 
   }
 }
+
+
