@@ -3,9 +3,24 @@ import 'widgets/fraktal_Image.dart';
 import 'widgets/bigbutton.dart';
 import 'painter/overlaypainter.dart';
 import 'dart:ui' as ui;
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:window_size/window_size.dart';
 
 
-void main() => runApp(const MandelbrotApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
+    setWindowTitle('Fraktal Explorer 🌀');
+    setWindowMinSize(const Size(640, 480));
+    setWindowMaxSize(const Size(1920, 1080));
+    setWindowFrame(const Rect.fromLTWH(100, 100, 1000, 800)); // Position + Größe
+  }
+
+  runApp(const MandelbrotApp());
+}
+
 
 class MandelbrotApp extends StatefulWidget {
   const MandelbrotApp({super.key});
