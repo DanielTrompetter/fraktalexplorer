@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'widgets/fraktalImage.dart';
+import 'widgets/fraktal_Image.dart';
 import 'dart:ui' as ui;
 
 void main() => runApp(const MandelbrotApp());
