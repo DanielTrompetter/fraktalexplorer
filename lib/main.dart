@@ -29,7 +29,7 @@ class FraktalApp extends StatefulWidget {
 }
 
 class _FraktalAppState extends State<FraktalApp> {
-  FraktalTyp aktuellerTyp = FraktalTyp.mandelBrot;
+  FraktalTyp aktuellerTyp = FraktalTyp.mandelbrot;
   ui.Image? image;
   Offset? dragStart;
   Offset? dragEnd;
@@ -41,7 +41,7 @@ class _FraktalAppState extends State<FraktalApp> {
   }
 
   Future<void> _generateImage() async {
-    final img = await renderImage(const Size(500, 500), aktuellerTyp);
+    final img = await renderImage(null, const Size(500, 500), aktuellerTyp);
     setState(() => image = img);
   }
 
@@ -64,8 +64,8 @@ class _FraktalAppState extends State<FraktalApp> {
               children: [
                 BigButton(
                   label: 'Mandelbrot',
-                  isActive: aktuellerTyp == FraktalTyp.mandelBrot,
-                  onPressed: () => _wechselTyp(FraktalTyp.mandelBrot),
+                  isActive: aktuellerTyp == FraktalTyp.mandelbrot,
+                  onPressed: () => _wechselTyp(FraktalTyp.mandelbrot),
                 ),
                 const SizedBox(width: 16),
                 BigButton(
@@ -83,16 +83,16 @@ class _FraktalAppState extends State<FraktalApp> {
               onPanUpdate: (details) {
                 setState(() => dragEnd = details.localPosition);
               },
-              onPanEnd: (_) {
+              onPanEnd: (_) async {
                 if (dragStart != null && dragEnd != null) {
                   final rect = Rect.fromPoints(dragStart!, dragEnd!);
-                  final breite = rect.width;
-                  final height = rect.height;
+                  final neueImage = await renderImage(null, Size(rect.width, rect.height), aktuellerTyp);
 
-                  print('Selektiertes Rechteck: $rect');
-                  print('Größe: ${breite.toStringAsFixed(2)} x ${height.toStringAsFixed(2)}');
-
-                  // ZOOOOOOOOOM!
+                  setState(() {
+                    image = neueImage;
+                    dragStart = null;
+                    dragEnd = null;
+                  });
                 }
               },
               child: CustomPaint(
@@ -113,46 +113,3 @@ class _FraktalAppState extends State<FraktalApp> {
     );
   }
 }
-
-
-class FraktalImageWidget extends StatefulWidget {
-  final FraktalTyp typ;
-
-  const FraktalImageWidget({super.key, required this.typ});
-
-  @override
-  State<FraktalImageWidget> createState() => _FraktalImageWidgetState();
-}
-
-class _FraktalImageWidgetState extends State<FraktalImageWidget> {
-  ui.Image? image;
-
-  @override
-  void didUpdateWidget(covariant FraktalImageWidget oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.typ != widget.typ) {
-      _generateImage();
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _generateImage();
-  }
-
-  Future<void> _generateImage() async {
-    final img = await renderImage(const Size(500, 500), widget.typ);
-    setState(() => image = img);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: image == null
-          ? const CircularProgressIndicator()
-          : RawImage(image: image, scale: 1.0),
-    );
-  }
-}
-
