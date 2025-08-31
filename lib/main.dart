@@ -86,7 +86,7 @@ class _FraktalAppState extends State<FraktalApp> {
               onPanEnd: (_) async {
                 if (dragStart != null && dragEnd != null) {
                   final rect = Rect.fromPoints(dragStart!, dragEnd!);
-                  final neueImage = await renderImage(null, Size(rect.width, rect.height), aktuellerTyp);
+                  final neueImage = await renderImage(rect, Size(500, 500), aktuellerTyp);
 
                   setState(() {
                     image = neueImage;
