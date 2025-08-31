@@ -55,7 +55,7 @@ class _MandelbrotAppState extends State<MandelbrotApp> {
                 ),
                 const SizedBox(width: 16),
                 BigButton(
-                  label: 'Julia',
+                  label: 'Juliamenge',
                   isActive: aktuellerTyp == FraktalTyp.Julia,
                   onPressed: () => _wechselTyp(FraktalTyp.Julia),
                 ),
