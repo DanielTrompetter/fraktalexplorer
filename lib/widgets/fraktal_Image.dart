@@ -5,17 +5,17 @@ import '../painter/mandelbrot_painter.dart';
 
 enum FraktalTyp
 {
-  MandelBrot,
-  Julia
+  mandelBrot,
+  juliaMenge
 }
 
-FraktalTyp aktuellerTyp = FraktalTyp.MandelBrot;
+FraktalTyp aktuellerTyp = FraktalTyp.mandelBrot;
 
 Future<ui.Image> renderImage(Size size, FraktalTyp typ) async {
   final recorder = ui.PictureRecorder();
   final canvas = Canvas(recorder);
 
-  final painter = typ == FraktalTyp.MandelBrot?MandelbrotPainter():JuliaPainter();
+  final painter = typ == FraktalTyp.mandelBrot?MandelbrotPainter():JuliaPainter();
   painter.paint(canvas, size);
 
   final picture = recorder.endRecording();

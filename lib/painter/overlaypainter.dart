@@ -34,11 +34,22 @@ class OverlayPainter extends CustomPainter {
     base.paint(canvas, size);
 
     if (dragStart != null && dragEnd != null) {
-      final rect = Rect.fromPoints(dragStart!, dragEnd!);
+      final dx = dragEnd!.dx - dragStart!.dx;
+      final dy = dragEnd!.dy - dragStart!.dy;
+      final side = dx.abs().clamp(0, dy.abs()); // kleinste Seite
+
+      // Richtung beibehalten
+      final end = Offset(
+        dragStart!.dx + (dx.isNegative ? -side : side),
+        dragStart!.dy + (dy.isNegative ? -side : side),
+      );
+
+      final rect = Rect.fromPoints(dragStart!, end);
       final paint = Paint()
         ..color = Colors.orange
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2;
+
       canvas.drawRect(rect, paint);
     }
   }

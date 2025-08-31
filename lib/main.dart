@@ -4,7 +4,6 @@ import 'widgets/bigbutton.dart';
 import 'painter/overlaypainter.dart';
 import 'dart:ui' as ui;
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:window_size/window_size.dart';
 
 
@@ -12,7 +11,7 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
-    setWindowTitle('Fraktal Explorer 🌀');
+    setWindowTitle('Fraktal Explorer');
     setWindowMinSize(const Size(640, 480));
     setWindowMaxSize(const Size(1920, 1080));
     setWindowFrame(const Rect.fromLTWH(100, 100, 1000, 800)); // Position + Größe
@@ -30,7 +29,7 @@ class MandelbrotApp extends StatefulWidget {
 }
 
 class _MandelbrotAppState extends State<MandelbrotApp> {
-  FraktalTyp aktuellerTyp = FraktalTyp.MandelBrot;
+  FraktalTyp aktuellerTyp = FraktalTyp.mandelBrot;
   ui.Image? image;
   Offset? dragStart;
   Offset? dragEnd;
@@ -42,7 +41,7 @@ class _MandelbrotAppState extends State<MandelbrotApp> {
   }
 
   Future<void> _generateImage() async {
-    final img = await renderImage(const Size(300, 300), aktuellerTyp);
+    final img = await renderImage(const Size(500, 500), aktuellerTyp);
     setState(() => image = img);
   }
 
@@ -65,14 +64,14 @@ class _MandelbrotAppState extends State<MandelbrotApp> {
               children: [
                 BigButton(
                   label: 'Mandelbrot',
-                  isActive: aktuellerTyp == FraktalTyp.MandelBrot,
-                  onPressed: () => _wechselTyp(FraktalTyp.MandelBrot),
+                  isActive: aktuellerTyp == FraktalTyp.mandelBrot,
+                  onPressed: () => _wechselTyp(FraktalTyp.mandelBrot),
                 ),
                 const SizedBox(width: 16),
                 BigButton(
                   label: 'Juliamenge',
-                  isActive: aktuellerTyp == FraktalTyp.Julia,
-                  onPressed: () => _wechselTyp(FraktalTyp.Julia),
+                  isActive: aktuellerTyp == FraktalTyp.juliaMenge,
+                  onPressed: () => _wechselTyp(FraktalTyp.juliaMenge),
                 ),
               ],
             ),
@@ -85,7 +84,16 @@ class _MandelbrotAppState extends State<MandelbrotApp> {
                 setState(() => dragEnd = details.localPosition);
               },
               onPanEnd: (_) {
-                // Optional: Zoom oder Reset
+                if (dragStart != null && dragEnd != null) {
+                  final rect = Rect.fromPoints(dragStart!, dragEnd!);
+                  final breite = rect.width;
+                  final height = rect.height;
+
+                  print('Selektiertes Rechteck: $rect');
+                  print('Größe: ${breite.toStringAsFixed(2)} x ${height.toStringAsFixed(2)}');
+
+                  // ZOOOOOOOOOM!
+                }
               },
               child: CustomPaint(
                 painter: OverlayPainter(
@@ -94,8 +102,8 @@ class _MandelbrotAppState extends State<MandelbrotApp> {
                   dragEnd: dragEnd,
                 ),
                 child: SizedBox(
-                  width: image?.width.toDouble() ?? 300,
-                  height: image?.height.toDouble() ?? 300,
+                  width: image?.width.toDouble() ?? 500,
+                  height: image?.height.toDouble() ?? 500,
                 ),
               ),
             ),
@@ -134,7 +142,7 @@ class _FraktalImageWidgetState extends State<FraktalImageWidget> {
   }
 
   Future<void> _generateImage() async {
-    final img = await renderImage(const Size(300, 300), widget.typ);
+    final img = await renderImage(const Size(500, 500), widget.typ);
     setState(() => image = img);
   }
 
