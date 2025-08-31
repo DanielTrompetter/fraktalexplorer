@@ -17,18 +17,18 @@ void main() {
     setWindowFrame(const Rect.fromLTWH(100, 100, 1000, 800)); // Position + Größe
   }
 
-  runApp(const MandelbrotApp());
+  runApp(const FraktalApp());
 }
 
 
-class MandelbrotApp extends StatefulWidget {
-  const MandelbrotApp({super.key});
+class FraktalApp extends StatefulWidget {
+  const FraktalApp({super.key});
 
   @override
-  State<MandelbrotApp> createState() => _MandelbrotAppState();
+  State<FraktalApp> createState() => _FraktalAppState();
 }
 
-class _MandelbrotAppState extends State<MandelbrotApp> {
+class _FraktalAppState extends State<FraktalApp> {
   FraktalTyp aktuellerTyp = FraktalTyp.mandelBrot;
   ui.Image? image;
   Offset? dragStart;
