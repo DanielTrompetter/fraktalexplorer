@@ -1,3 +1,4 @@
 {
-    "dart.getFlutterSdkCommand": null
+    "dart.getFlutterSdkCommand": null,
+    "cmake.ignoreCMakeListsMissing": true
 }

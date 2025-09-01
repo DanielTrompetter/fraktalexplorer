@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'widgets/fraktal_Image.dart';
 import 'widgets/bigbutton.dart';
-import 'painter/overlaypainter.dart';
 import 'dart:ui' as ui;
 import 'dart:io';
 import 'package:window_size/window_size.dart';
@@ -31,8 +30,6 @@ class FraktalApp extends StatefulWidget {
 class _FraktalAppState extends State<FraktalApp> {
   FraktalTyp aktuellerTyp = FraktalTyp.mandelbrot;
   ui.Image? image;
-  Offset? dragStart;
-  Offset? dragEnd;
 
   @override
   void initState() {
@@ -41,7 +38,7 @@ class _FraktalAppState extends State<FraktalApp> {
   }
 
   Future<void> _generateImage() async {
-    final img = await renderImage(null, const Size(500, 500), aktuellerTyp);
+    final img = await renderImage(500, 500, aktuellerTyp);
     setState(() => image = img);
   }
 
@@ -51,7 +48,8 @@ class _FraktalAppState extends State<FraktalApp> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) 
+  {
     return MaterialApp(
       home: Scaffold(
         backgroundColor: Colors.deepPurple,
@@ -76,37 +74,18 @@ class _FraktalAppState extends State<FraktalApp> {
               ],
             ),
             const SizedBox(height: 24),
-            GestureDetector(
-              onPanStart: (details) {
-                setState(() => dragStart = details.localPosition);
-              },
-              onPanUpdate: (details) {
-                setState(() => dragEnd = details.localPosition);
-              },
-              onPanEnd: (_) async {
-                if (dragStart != null && dragEnd != null) {
-                  final rect = Rect.fromPoints(dragStart!, dragEnd!);
-                  final neueImage = await renderImage(rect, Size(500, 500), aktuellerTyp);
-
-                  setState(() {
-                    image = neueImage;
-                    dragStart = null;
-                    dragEnd = null;
-                  });
-                }
-              },
-              child: CustomPaint(
-                painter: OverlayPainter(
-                  base: FraktalPainter(image),
-                  dragStart: dragStart,
-                  dragEnd: dragEnd,
-                ),
-                child: SizedBox(
-                  width: image?.width.toDouble() ?? 500,
-                  height: image?.height.toDouble() ?? 500,
-                ),
+            if (image != null)
+              RawImage(
+                image: image,
+                width: image!.width.toDouble(),
+                height: image!.height.toDouble(),
+              )
+            else
+              const SizedBox(
+                width: 500,
+                height: 500,
+                child: Center(child: CircularProgressIndicator()),
               ),
-            ),
           ],
         ),
       ),
