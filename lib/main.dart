@@ -2,21 +2,17 @@ import 'package:flutter/material.dart';
 import 'widgets/fraktal_Image.dart';
 import 'widgets/bigbutton.dart';
 import 'dart:ui' as ui;
-import 'dart:io';
-import 'package:window_size/window_size.dart';
+import 'package:device_preview/device_preview.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
-    setWindowTitle('Fraktal Explorer');
-    setWindowMinSize(const Size(640, 480));
-    setWindowMaxSize(const Size(1920, 1080));
-    setWindowFrame(const Rect.fromLTWH(100, 100, 1000, 800));
-  }
-
-  runApp(const FraktalApp());
+  runApp(
+    DevicePreview(
+      enabled: true,
+      builder: (context) => FraktalApp(),
+    ),
+  );
 }
+
 
 class FraktalApp extends StatefulWidget {
   const FraktalApp({super.key});

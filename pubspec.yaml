@@ -11,6 +11,8 @@ dependencies:
     sdk: flutter
   window_size: ^0.1.0
   cupertino_icons: ^1.0.8
+  device_preview: ^1.1.0
+
 
 dev_dependencies:
   flutter_test:
