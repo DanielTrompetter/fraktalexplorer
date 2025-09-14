@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-Future<Uint8List> calcMandelbrot(int width, int height) async {
+Future<Uint8List> calcMandelbrot(int width, int height, int maxIterations) async {
   final pixels = Uint8List(width * height * 4);
 
   // Symmetrischer Bereich um (0, 0)
@@ -23,7 +23,7 @@ Future<Uint8List> calcMandelbrot(int width, int height) async {
       double zx = 0;
       double zy = 0;
 
-      while (zx * zx + zy * zy < 4 && iter < 1024) {
+      while (zx * zx + zy * zy < 4 && iter < maxIterations) {
         final temp = zx * zx - zy * zy + cx;
         zy = 2 * zx * zy + cy;
         zx = temp;
@@ -38,5 +38,6 @@ Future<Uint8List> calcMandelbrot(int width, int height) async {
 
     }
   }
+  print("Neues Mandedlbrot mit $maxIterations berechnet!");
   return pixels;
 }

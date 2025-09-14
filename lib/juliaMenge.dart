@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-Future<Uint8List> calcJulia(int width, int height) async 
+Future<Uint8List> calcJulia(int width, int height, int maxIterations) async 
 {
   final pixels = Uint8List(width * height * 4);
 
@@ -29,7 +29,7 @@ Future<Uint8List> calcJulia(int width, int height) async
       const cRe = -0.7;
       const cIm = 0.27015;
 
-      while (zx * zx + zy * zy < 4 && iter < 1024) 
+      while (zx * zx + zy * zy < 4 && iter < maxIterations) 
       {
         final temp = zx * zx - zy * zy + cRe;
         zy = 2 * zx * zy + cIm;

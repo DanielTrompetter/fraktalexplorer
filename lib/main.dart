@@ -3,8 +3,8 @@ import 'widgets/fraktal_Image.dart';
 import 'widgets/bigbutton.dart';
 import 'dart:ui' as ui;
 
+/*
 import 'package:device_preview/device_preview.dart';
-
 void main() {
   runApp(
     DevicePreview(
@@ -13,8 +13,8 @@ void main() {
     ),
   );
 }
+*/
 
-/*
 import 'dart:io';
 import 'package:window_size/window_size.dart';
 
@@ -30,47 +30,50 @@ void main() {
 
   runApp(const FraktalApp());
 }
-*/
-
 
 class FraktalApp extends StatefulWidget {
   const FraktalApp({super.key});
 
   @override
-  State<FraktalApp> createState() => _FraktalAppState();
+  State<FraktalApp> createState() => FraktalAppState();
 }
 
-class _FraktalAppState extends State<FraktalApp> {
+class FraktalAppState extends State<FraktalApp> {
   FraktalTyp aktuellerTyp = FraktalTyp.mandelbrot;
   ui.Image? image;
   Offset? zoomCenter;
   double zoomFactor = 1.0;
+  int maxIterations = 512; // Startwert
+  Duration? renderDuration;
 
   @override
   void initState() {
     super.initState();
-    _generateImage();
+    generateImage();
   }
 
-  Future<void> _generateImage() async {
-    final img = await renderImage(500, 500, aktuellerTyp);
+  Future<Duration> generateImage() async {
+    final startTime = DateTime.now();
+    final img = await renderImage(500, 500, maxIterations, aktuellerTyp);
+    final endTime = DateTime.now();
     setState(() {
       image = img;
       zoomFactor = 1.0;
       zoomCenter = null;
     });
+    return endTime.difference(startTime);
   }
 
-  void _wechselTyp(FraktalTyp typ) {
+  Future<void> changeFractalType(FraktalTyp typ) async {
     setState(() {
       aktuellerTyp = typ;
       zoomFactor = 1.0;
       zoomCenter = null;
     });
-    _generateImage();
+    renderDuration = await generateImage();
   }
 
-void _handleTapDown(TapDownDetails details) {
+void handleTapDown(TapDownDetails details) {
   final localPos = details.localPosition;
 
   setState(() {
@@ -90,8 +93,9 @@ void _handleTapDown(TapDownDetails details) {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
+@override
+Widget build(BuildContext context) 
+{
     return MaterialApp(
       home: Scaffold(
         backgroundColor: Colors.deepPurple,
@@ -100,54 +104,97 @@ void _handleTapDown(TapDownDetails details) {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // 🔲 Umschalt-Buttons für Fraktaltyp
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   BigButton(
                     label: 'Mandelbrot',
                     isActive: aktuellerTyp == FraktalTyp.mandelbrot,
-                    onPressed: () => _wechselTyp(FraktalTyp.mandelbrot),
+                    onPressed: () => changeFractalType(FraktalTyp.mandelbrot),
                   ),
                   const SizedBox(width: 16),
                   BigButton(
-                    label: 'Juliamenge',
+                    label: 'Julia-Menge',
                     isActive: aktuellerTyp == FraktalTyp.juliaMenge,
-                    onPressed: () => _wechselTyp(FraktalTyp.juliaMenge),
+                    onPressed: () => changeFractalType(FraktalTyp.juliaMenge),
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
-              GestureDetector(
-                onTapDown: _handleTapDown,
-                child: MouseRegion(
-                  child: SizedBox(
-                    width: 500,
-                    height: 500,
-                    child: image != null
-                        ? (zoomFactor > 1.0 && zoomCenter != null
-                            ? CustomPaint(
-                                painter: ZoomPainter(image!, zoomCenter!, zoomFactor),
-                              )
-                            : RawImage(image: image))
-                        : const Center(child: CircularProgressIndicator()),
+              const SizedBox(height: 16),
+
+              // 🔲 Bild + Slider nebeneinander
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTapDown: handleTapDown,
+                    child: MouseRegion(
+                      child: SizedBox(
+                        width: 500,
+                        height: 500,
+                        child: image != null
+                            ? (zoomFactor > 1.0 && zoomCenter != null
+                                ? CustomPaint(
+                                    painter: ZoomPainter(image!, zoomCenter!, zoomFactor),
+                                  )
+                                : RawImage(image: image))
+                            : const Center(child: CircularProgressIndicator()),
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(width: 24),
+                  Column(
+                    children: [
+                      const Text(
+                        'Iterationen',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      SizedBox(
+                        height: 500,
+                        child: RotatedBox(
+                          quarterTurns: 3,
+                          child: Slider(
+                            value: maxIterations.toDouble(),
+                            min: 256,
+                            max: 4096,
+                            divisions: ((4096 - 256) ~/ 256),
+                            label: '$maxIterations',
+                            onChanged: (value) async {
+                              setState(() {
+                                maxIterations = value.round();
+                              });
+                              renderDuration = await generateImage();
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+
+              // 🔲 Infozeile
+              Text(
+                'Iterationen: $maxIterations'
+                '${renderDuration != null ? ' | Dauer: ${renderDuration!.inMilliseconds} ms' : ''}',
+                style: const TextStyle(color: Colors.white),
               ),
               const SizedBox(height: 16),
-              BigButton
-              (
+
+              // 🔲 Zoom zurücksetzen
+              BigButton(
                 isActive: zoomFactor != 1.0,
                 label: 'Zoom zurücksetzen',
                 onPressed: _resetZoom,
-            ),
+              ),
             ],
           ),
         ),
       ),
     );
   }
-}
-
+  }
 class ZoomPainter extends CustomPainter {
   final ui.Image image;
   final Offset center;

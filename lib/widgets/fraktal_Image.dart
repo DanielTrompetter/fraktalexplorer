@@ -9,16 +9,16 @@ enum FraktalTyp {
   juliaMenge,
 }
 
-Future<ui.Image> renderImage(int width, int height, FraktalTyp typ) async 
+Future<ui.Image> renderImage(int width, int height, int maxIterations, FraktalTyp typ) async 
 {
   Uint8List pixels;
   if(typ ==FraktalTyp.mandelbrot)
   {
-    pixels = await calcMandelbrot(width, height);
+    pixels = await calcMandelbrot(width, height, maxIterations);
   }
   else
   {
-    pixels = await calcJulia(width, height);
+    pixels = await calcJulia(width, height, maxIterations);
   }
 
   final completer = Completer<ui.Image>();
